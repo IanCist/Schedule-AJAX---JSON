@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    const scheduleUrl = 'https://api.npoint.io/33c72f997a77579e3435';
+    const scheduleUrl = 'https://api.npoint.io/7837e2b221422e14345a';
 
     function getClassesForDay(scheduleData, day) {
         return scheduleData.filter(classInfo => classInfo.days.includes(day));
@@ -7,7 +7,10 @@ $(document).ready(function () {
 
     $('#submitDay').on('click', function () {
         const dayInput = $('#dayInput').val().toUpperCase();
-        if
+        if (!/^[A-G]$/.test(dayInput)) {
+            alert("Please enter a valid day (A-G).");
+            return;
+        }
 
         $.ajax({
             url: scheduleUrl,
@@ -23,14 +26,18 @@ $(document).ready(function () {
                         const row = `
                         <tr>
                             <td>${classInfo.period}</td>
-                            <td>${classInfo.time}</td>
-                            <td>${classInfo.name}</td>
+                            <td>${classInfo.class}</td>
                             <td>${classInfo.teacher}</td>
                             <td>${classInfo.room}</td>
                         </tr>`;
                         $('#scheduleList').append(row);
                     });
+                } else {
+                    $('#scheduleList').append('<tr><td colspan="5" class="text-center">No classes today</td></tr>');
                 }
+            },
+            error: function () {
+                alert("Could not load the schedule. Please try again later.");
             }
         });
     });
