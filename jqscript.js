@@ -1,9 +1,19 @@
 $(document).ready(function () {
-    const scheduleUrl = 'https://api.npoint.io/7837e2b221422e14345a';
+    const scheduleUrl = 'https://api.npoint.io/36202f5431b58775e4fa';
 
     function getClassesForDay(scheduleData, day) {
         return scheduleData.filter(classInfo => classInfo.days.includes(day));
     }
+
+    const blockOrder = {
+        A: [1, 2, 3, 5, 6],
+        B: [4, 1, 2, 7, 5],
+        C: [3, 4, 1, 6, 7],
+        D: [2, 3, 4, 5, 6],
+        E: [1, 2, 3, 7, 5],
+        F: [4, 1, 2, 6, 7],
+        G: [3, 4, 7, 5, 6]
+    };
 
     $('#submitDay').on('click', function () {
         const dayInput = $('#dayInput').val().toUpperCase();
@@ -18,11 +28,14 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (data) {
                 const daySchedule = getClassesForDay(data.schedule, dayInput);
+                const orderedSchedule = blockOrder[dayInput].map(period => {
+                    return daySchedule.find(classInfo => classInfo.period === period);
+                });
 
                 $('#scheduleList').empty();
 
-                if (daySchedule.length > 0) {
-                    daySchedule.forEach(classInfo => {
+                if (orderedSchedule.length > 0) {
+                    orderedSchedule.forEach(classInfo => {
                         const row = `
                         <tr>
                             <td>${classInfo.period}</td>
